@@ -337,7 +337,7 @@
   }
 
   const audio = document.getElementById('audio');
-  audio.preload = 'none'; // 🔇 não baixa nada até tocar
+  audio.preload = 'none'; // lazy
 
   const queueEl = document.getElementById('queue');
   const queueCountEl = document.getElementById('queueCount');
@@ -474,14 +474,26 @@
     if (active) active.classList.add('active');
   }
 
+  // ======= CORRIGIDO: não liga loader se mesma faixa já tocando =======
   async function ensureSrcAndPlay(){
     const t = currentTrack();
     if(!t) return;
 
+    const sameTrack = (audio.dataset.trackId === t.id);
+    const needsNewSrc = !sameTrack;
+
+    if (sameTrack && !audio.paused) {
+      btnPlay.textContent='⏸';
+      btnPlay.setAttribute('aria-label','Pausar');
+      setRowLoading(state.index, false);
+      setGlobalLoading(false);
+      return;
+    }
+
     setRowLoading(state.index, true);
     setGlobalLoading(true);
 
-    if(audio.dataset.trackId !== t.id){
+    if (needsNewSrc){
       audio.src = t.src;
       audio.dataset.trackId = t.id;
     }
@@ -500,6 +512,8 @@
     audio.pause();
     btnPlay.textContent='▶';
     btnPlay.setAttribute('aria-label','Reproduzir');
+    setRowLoading(state.index, false);
+    setGlobalLoading(false);
   }
 
   function playAt(pos){
@@ -552,13 +566,19 @@
   /* AUDIO events */
   audio.addEventListener('loadedmetadata', ()=>{ dur.textContent = fmtTime(audio.duration); });
   audio.addEventListener('timeupdate', ()=>{ curTime.textContent = fmtTime(audio.currentTime); if (!isNaN(audio.duration)) seek.value = (audio.currentTime / audio.duration) * 100 || 0; });
-  audio.addEventListener('ended', next);
 
-  // Loading indicators
+  // Loading indicators + limpeza garantida
   audio.addEventListener('waiting', ()=>{ setRowLoading(state.index, true); setGlobalLoading(true); });
   audio.addEventListener('playing', ()=>{ setRowLoading(state.index, false); setGlobalLoading(false); });
   audio.addEventListener('canplay', ()=>{ setRowLoading(state.index, false); setGlobalLoading(false); dur.textContent = fmtTime(audio.duration); });
   audio.addEventListener('stalled', ()=>{ setRowLoading(state.index, true); setGlobalLoading(true); });
+
+  audio.addEventListener('pause', ()=>{ setRowLoading(state.index,false); setGlobalLoading(false); });
+  audio.addEventListener('ended', ()=>{ setRowLoading(state.index,false); setGlobalLoading(false); next(); });
+  audio.addEventListener('error', ()=>{ setRowLoading(state.index,false); setGlobalLoading(false); });
+  audio.addEventListener('abort', ()=>{ setRowLoading(state.index,false); setGlobalLoading(false); });
+  audio.addEventListener('emptied', ()=>{ setRowLoading(state.index,false); setGlobalLoading(false); });
+  audio.addEventListener('suspend', ()=>{ setRowLoading(state.index,false); setGlobalLoading(false); });
 
   seek.addEventListener('input', ()=>{ const p=parseFloat(seek.value)/100; if (isFinite(audio.duration)) curTime.textContent = fmtTime(p*audio.duration); });
   seek.addEventListener('change', ()=>{ const p=parseFloat(seek.value)/100; if (isFinite(audio.duration)) audio.currentTime = p*audio.duration; });

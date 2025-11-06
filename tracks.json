@@ -1,0 +1,324 @@
+[
+  {
+    "id": "t1",
+    "title": "Q isso perna longa?",
+    "artist": "Pernalonga",
+    "src": "assets/audio/audio1.mp3",
+    "cover": "assets/covers/cover1.gif",
+    "album": "Artista B"
+  },
+  {
+    "id": "t2",
+    "title": "É Disso Que A Velha Gosta",
+    "artist": "Artista B",
+    "src": "assets/audio/audio2.mp3",
+    "cover": "assets/covers/cover2.gif",
+    "album": "Sexfy"
+  },
+    {
+    "id": "t3",
+    "title": "Até o fim do mundo",
+    "artist": "Artista B",
+    "src": "assets/audio/audio3.mp3",
+    "cover": "assets/covers/cover3.gif",
+    "album": "Sexfy"
+  },
+      {
+    "id": "t4",
+    "title": "A como quero",
+    "artist": "Artista B",
+    "src": "assets/audio/audio4.mp3",
+    "cover": "assets/covers/cover4.gif",
+    "album": "Sexfy"
+  },
+    {
+    "id": "t5",
+    "title": "Charlie Bronha",
+    "artist": "Artista B",
+    "src": "assets/audio/audio5.mp3",
+    "cover": "assets/covers/cover5.gif",
+    "album": "Sexfy"
+  },
+  {
+    "id": "t6",
+    "title": "Do ex namorado",
+    "artist": "Artista B",
+    "src": "assets/audio/audio6.mp3",
+    "cover": "assets/covers/cover6.gif",
+    "album": "Sexfy"
+  },
+    {
+    "id": "t7",
+    "title": "Churrasco",
+    "artist": "Artista B",
+    "src": "assets/audio/audio7.mp3",
+    "cover": "assets/covers/cover7.gif",
+    "album": "Sexfy"
+  },
+      {
+    "id": "t8",
+    "title": "Sertanejo",
+    "artist": "Artista B",
+    "src": "assets/audio/audio8.mp3",
+    "cover": "assets/covers/cover8.gif",
+    "album": "Sexfy"
+  },
+        {
+    "id": "t9",
+    "title": "A luz dos olhos seus",
+    "artist": "Artista B",
+    "src": "assets/audio/audio9.mp3",
+    "cover": "assets/covers/cover9.gif",
+    "album": "Sexfy"
+  },
+  {
+    "id": "t10",
+    "title": "Ana",
+    "artist": "Artista B",
+    "src": "assets/audio/audio10.mp3",
+    "cover": "assets/covers/cover10.gif",
+    "album": "Sexfy"
+  },
+    {
+    "id": "t11",
+    "title": "Se essa rua",
+    "artist": "Artista B",
+    "src": "assets/audio/audio11.mp3",
+    "cover": "assets/covers/cover11.gif",
+    "album": "Sexfy"
+  },
+      {
+    "id": "t12",
+    "title": "Mininu de vó",
+    "artist": "Artista B",
+    "src": "assets/audio/audio12.mp3",
+    "cover": "assets/covers/cover12.gif",
+    "album": "Sexfy"
+  },
+      {
+    "id": "t13",
+    "title": "Queti Queti",
+    "artist": "Artista B",
+    "src": "assets/audio/audio13.mp3",
+    "cover": "assets/covers/cover13.gif",
+    "album": "Sexfy"
+  },
+        {
+    "id": "t14",
+    "title": "Se eu passar a minha mão",
+    "artist": "Artista B",
+    "src": "assets/audio/audio14.mp3",
+    "cover": "assets/covers/cover14.gif",
+    "album": "Sexfy"
+  },
+          {
+    "id": "t15",
+    "title": "MPB",
+    "artist": "Artista B",
+    "src": "assets/audio/audio15.mp3",
+    "cover": "assets/covers/cover15.gif",
+    "album": "Sexfy"
+  },
+            {
+    "id": "t16",
+    "title": "Pim Pom",
+    "artist": "Artista B",
+    "src": "assets/audio/audio16.mp3",
+    "cover": "assets/covers/cover16.gif",
+    "album": "Sexfy"
+  },
+              {
+    "id": "t17",
+    "title": "Borboletinha",
+    "artist": "Artista B",
+    "src": "assets/audio/audio17.mp3",
+    "cover": "assets/covers/cover17.gif",
+    "album": "Sexfy"
+  },
+                {
+    "id": "t18",
+    "title": "Tudo se transforma com magia",
+    "artist": "Artista B",
+    "src": "assets/audio/audio18.mp3",
+    "cover": "assets/covers/cover18.gif",
+    "album": "Sexfy"
+  },
+                  {
+    "id": "t19",
+    "title": "Cheia de lombriga",
+    "artist": "Artista B",
+    "src": "assets/audio/audio19.mp3",
+    "cover": "assets/covers/cover19.gif",
+    "album": "Sexfy"
+  },
+  {
+    "id": "t20",
+    "title": "Clássica",
+    "artist": "Artista B",
+    "src": "assets/audio/audio20.mp3",
+    "cover": "assets/covers/cover20.gif",
+    "album": "Sexfy"
+  },
+    {
+    "id": "t21",
+    "title": "Gustavo Lima e vc",
+    "artist": "Artista B",
+    "src": "assets/audio/audio21.mp3",
+    "cover": "assets/covers/cover21.gif",
+    "album": "Sexfy"
+  },
+      {
+    "id": "t22",
+    "title": "Se essa rua fosse minha",
+    "artist": "Artista B",
+    "src": "assets/audio/audio22.mp3",
+    "cover": "assets/covers/cover22.gif",
+    "album": "Sexfy"
+  },
+        {
+    "id": "t23",
+    "title": "Encosta sua cabecinha",
+    "artist": "Artista B",
+    "src": "assets/audio/audio23.mp3",
+    "cover": "assets/covers/cover23.gif",
+    "album": "Sexfy"
+  },
+          {
+    "id": "t24",
+    "title": "A grande pica",
+    "artist": "Artista B",
+    "src": "assets/audio/audio24.mp3",
+    "cover": "assets/covers/cover24.gif",
+    "album": "Sexfy"
+  },
+            {
+    "id": "t25",
+    "title": "Hoje a Suruba é Nossa",
+    "artist": "Artista B",
+    "src": "assets/audio/audio25.mp3",
+    "cover": "assets/covers/cover25.gif",
+    "album": "Sexfy"
+  },
+              {
+    "id": "t26",
+    "title": "Embarque nesse carrossel",
+    "artist": "Artista B",
+    "src": "assets/audio/audio26.mp3",
+    "cover": "assets/covers/cover26.gif",
+    "album": "Sexfy"
+  },
+                {
+    "id": "t27",
+    "title": "Meu amarelinho",
+    "artist": "Artista B",
+    "src": "assets/audio/audio27.mp3",
+    "cover": "assets/covers/cover27.gif",
+    "album": "Sexfy"
+  },
+                  {
+    "id": "t28",
+    "title": "Gata me liga",
+    "artist": "Artista B",
+    "src": "assets/audio/audio28.mp3",
+    "cover": "assets/covers/cover28.gif",
+    "album": "Sexfy"
+  },
+                    {
+    "id": "t29",
+    "title": "Que bonita sua roupa",
+    "artist": "Artista B",
+    "src": "assets/audio/audio29.mp3",
+    "cover": "assets/covers/cover29.gif",
+    "album": "Sexfy"
+  },
+                      {
+    "id": "t30",
+    "title": "Procurando bem todo mundo tem",
+    "artist": "Larissa Mortadela",
+    "src": "assets/audio/audio30.mp3",
+    "cover": "assets/covers/cover30.gif",
+    "album": "Sexfy"
+  },
+                        {
+    "id": "t31",
+    "title": "Bobbie goods",
+    "artist": "Artista B",
+    "src": "assets/audio/audio31.mp3",
+    "cover": "assets/covers/cover31.gif",
+    "album": "Sexfy"
+  },
+                          {
+    "id": "t32",
+    "title": "Wilson vai",
+    "artist": "Artista B",
+    "src": "assets/audio/audio32.mp3",
+    "cover": "assets/covers/cover32.gif",
+    "album": "Sexfy"
+  },
+                            {
+    "id": "t33",
+    "title": "Sou F0did0",
+    "artist": "Artista B",
+    "src": "assets/audio/audio33.mp3",
+    "cover": "assets/covers/cover33.gif",
+    "album": "Sexfy"
+  },
+                              {
+    "id": "t34",
+    "title": "Que isso Chaves",
+    "artist": "Artista B",
+    "src": "assets/audio/audio34.mp3",
+    "cover": "assets/covers/cover34.gif",
+    "album": "Sexfy"
+  },
+                                {
+    "id": "t35",
+    "title": "Eu criei filha minha",
+    "artist": "Artista B",
+    "src": "assets/audio/audio35.mp3",
+    "cover": "assets/covers/cover35.gif",
+    "album": "Sexfy"
+  },
+                                  {
+    "id": "t36",
+    "title": "É bom",
+    "artist": "Artista B",
+    "src": "assets/audio/audio36.mp3",
+    "cover": "assets/covers/cover36.gif",
+    "album": "Sexfy"
+  },
+                                    {
+    "id": "t37",
+    "title": "Desça",
+    "artist": "Artista B",
+    "src": "assets/audio/audio37.mp3",
+    "cover": "assets/covers/cover37.gif",
+    "album": "Sexfy"
+  },
+                                      {
+    "id": "t38",
+    "title": "Ele é meio torto",
+    "artist": "Artista B",
+    "src": "assets/audio/audio38.mp3",
+    "cover": "assets/covers/cover38.gif",
+    "album": "Sexfy"
+  },
+                                        {
+    "id": "t39",
+    "title": "No silêncio",
+    "artist": "Artista B",
+    "src": "assets/audio/audio39.mp3",
+    "cover": "assets/covers/cover39.gif",
+    "album": "Sexfy"
+  },
+                                          {
+    "id": "t40",
+    "title": "A banda passar",
+    "artist": "Artista B",
+    "src": "assets/audio/audio40.mp3",
+    "cover": "assets/covers/cover40.gif",
+    "album": "Sexfy"
+  }
+
+  
+]

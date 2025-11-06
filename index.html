@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Churras com amigos</title>
+  <style>
+    :root{
+      --bg:#121212; --panel:#181818; --panel-2:#0f0f0f;
+      --text:#ffffff; --muted:#b3b3b3; --accent:#1db954; --accent-2:#1ed760; --border:#2a2a2a;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial; color:var(--text);
+      background:linear-gradient(180deg, #1d1d1d 0%, var(--bg) 220px);
+      overflow:hidden;
+    }
+    a{color:inherit}
+
+    /* ===== LAYOUT (desktop) ===== */
+    .app{display:grid; grid-template-columns:260px 1fr; grid-template-rows:1fr 92px; height:100vh}
+    .sidebar{grid-row:1; grid-column:1; background:var(--panel); border-right:1px solid var(--border); display:flex; flex-direction:column; padding:16px; gap:16px; min-width:0}
+    .content{grid-row:1; grid-column:2; overflow:auto; min-width:0;}
+    .playerbar{grid-row:2; grid-column:1 / span 2; background:var(--panel-2); border-top:1px solid var(--border);}
+
+    /* ===== SIDEBAR ===== */
+    .brand{display:flex; align-items:center; gap:10px; font-weight:700; letter-spacing:.3px}
+    .brand .logo{width:28px; height:28px; border-radius:50%; background:
+      radial-gradient(circle at 30% 30%, var(--accent) 35%, #0a0 36%, #0a0 60%, transparent 61%),
+      conic-gradient(from 210deg at 60% 60%, var(--accent) 0 40%, transparent 40% 100%);
+      box-shadow:0 0 0 2px #0a0 inset
+    }
+    .nav{display:flex; flex-direction:column; gap:8px}
+    .nav a{padding:10px 12px; border-radius:8px; color:var(--muted); text-decoration:none; display:flex; align-items:center; gap:10px}
+    .nav a.active,.nav a:hover{background:#222; color:var(--text)}
+    .library{margin-top:8px}
+    .library h4{margin:8px 0 12px; color:var(--muted); font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:.12em}
+    .search{display:flex; align-items:center; gap:8px; background:#222; border:1px solid var(--border); border-radius:8px; padding:6px 8px}
+    .search input{background:transparent; border:0; outline:0; width:100%; color:var(--text)}
+
+    /* ===== CONTENT ===== */
+    .content-inner{padding:24px 24px 140px; max-width:1200px; margin:0 auto;}
+    .section-title{font-size:24px; font-weight:800; margin:0 0 16px}
+
+    /* HERO (capa do topo que segue a faixa atual) */
+    .now-hero{
+      display:flex; align-items:center; gap:16px;
+      margin:0 0 16px; padding:12px;
+      border:1px solid var(--border); border-radius:16px;
+      background:rgba(255,255,255,0.04);
+    }
+    .now-hero img{
+      width:96px; aspect-ratio:1/1; border-radius:12px; object-fit:cover;
+      background:#222; flex:0 0 96px;
+    }
+    .now-hero .hero-meta h3{margin:0 0 4px; font-size:18px; font-weight:800}
+    .now-hero .hero-meta p{margin:0; color:var(--muted)}
+
+    .grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(180px, 1fr)); gap:16px;}
+    .card{background:rgba(255,255,255,0.045); border:1px solid var(--border); border-radius:16px; padding:14px; cursor:pointer; transition:.2s transform, .2s background, .2s box-shadow;}
+    .card:hover{transform:translateY(-2px); background:rgba(255,255,255,0.06); box-shadow:0 6px 22px rgba(0,0,0,.25);}
+    .cover{width:100%; aspect-ratio:1/1; border-radius:8px; object-fit:cover; background:#222;}
+    .title{margin:10px 0 2px; font-weight:700; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+    .subtitle{color:var(--muted); font-size:13px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+
+    /* ===== QUEUE ===== */
+    .queue{margin-top:24px; background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:12px;}
+    .queue header{display:flex; align-items:center; justify-content:space-between; padding:12px 14px; border-bottom:1px solid var(--border)}
+    .queue-list{max-height:48vh; overflow:auto}
+    .track{display:grid; grid-template-columns:44px 1fr auto; gap:12px; align-items:center; padding:10px 14px; border-top:1px solid rgba(255,255,255,0.03)}
+    .track:first-child{border-top:0}
+    .track.active{background:rgba(29,185,84,0.12)}
+    .track:hover{background:rgba(255,255,255,0.06)}
+    .track .track-cover{
+      width:44px; aspect-ratio:1/1; border-radius:6px; object-fit:cover; background:#222;
+      flex:0 0 44px;
+    }
+    .track .meta{overflow:hidden}
+    .track .meta .t{font-weight:600; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+    .track .meta .a{color:var(--muted); font-size:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+    .track .dur{color:var(--muted); font-size:12px; margin-left:10px}
+
+    /* ===== PLAYER BAR ===== */
+    .playerbar{display:grid; grid-template-columns:1fr 2fr 1fr; align-items:center; padding:12px 16px; gap:16px; backdrop-filter:saturate(120%) blur(6px);}
+    .now{display:flex; align-items:center; gap:12px; min-width:0}
+    .now img{
+      width:56px; height:56px; aspect-ratio:1/1; border-radius:6px; object-fit:cover; background:#222;
+      flex:0 0 56px;
+    }
+    .now .info{min-width:0}
+    .now .info .np-title{font-weight:700; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+    .now .info .np-artist{font-size:12px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+
+    .controls{display:flex; flex-direction:column; gap:8px; align-items:center; justify-content:center}
+    .buttons{display:flex; align-items:center; gap:12px}
+    .btn{width:34px; height:34px; border-radius:50%; border:1px solid var(--border); background:#1a1a1a; display:grid; place-items:center; color:var(--text); cursor:pointer}
+    .btn:hover{background:#222}
+    .btn.primary{width:42px; height:42px; background:var(--text); color:#000; border:0; font-weight:800}
+    .btn.toggler.on{color:var(--accent)}
+
+    .seek{display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:10px; width:100%;}
+    .time{font-variant-numeric:tabular-nums; font-size:12px; color:var(--muted)}
+    input[type="range"]{appearance:none; -webkit-appearance:none; height:4px; background:#444; border-radius:999px; outline:none}
+    input[type="range"]::-webkit-slider-thumb{appearance:none; -webkit-appearance:none; width:14px; height:14px; border-radius:50%; background:var(--accent); cursor:pointer; border:0; box-shadow:0 0 0 4px rgba(29,185,84,.2)}
+
+    .right{justify-self:end; display:flex; align-items:center; gap:12px}
+    .vol{display:flex; align-items:center; gap:10px; width:160px}
+    .vol input{width:120px}
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 1024px){
+      .app{grid-template-columns:220px 1fr; grid-template-rows:1fr 92px}
+      .sidebar{padding:14px}
+      .content-inner{padding:20px 20px 140px}
+      .grid{grid-template-columns:repeat(auto-fill, minmax(160px, 1fr));}
+      .now img{width:56px; height:56px}
+      .now-hero img{width:88px; flex-basis:88px}
+    }
+
+    @media (max-width: 640px){
+      .app{grid-template-columns:1fr; grid-template-rows:1fr 96px 64px}
+      .content{grid-row:1; grid-column:1}
+      .playerbar{grid-row:2; grid-column:1; padding:8px 10px}
+      .sidebar{
+        grid-row:3; grid-column:1; flex-direction:row; align-items:center; justify-content:space-between;
+        padding:10px 12px; gap:10px; border-right:0; border-top:1px solid var(--border); background:var(--panel);
+      }
+      .brand{gap:8px}
+      .nav{flex-direction:row; gap:6px}
+      .nav a{padding:8px 10px; font-size:14px}
+      .library{display:none}
+
+      .buttons{gap:8px}
+      .btn{width:36px; height:36px}
+      .btn.primary{width:48px; height:48px}
+      .seek{gap:8px}
+      input[type="range"]{height:6px}
+      .vol{display:none}
+      .now img{width:52px; height:52px; flex-basis:52px}
+      .np-title{font-size:13px}
+      .np-artist{font-size:12px}
+      .now-hero img{width:80px; flex-basis:80px}
+    }
+
+    /* ===== AGE GATE (18+) ===== */
+    .agegate-backdrop{
+      position:fixed; inset:0; display:none; align-items:center; justify-content:center;
+      background:rgba(0,0,0,.68); backdrop-filter:blur(6px) saturate(120%);
+      z-index:9999;
+    }
+    .agegate-backdrop.show{ display:flex; }
+    .agegate{
+      width:min(520px, 92vw); background:var(--panel); border:1px solid var(--border);
+      border-radius:20px; padding:24px; text-align:center;
+      box-shadow:0 20px 60px rgba(0,0,0,.6);
+      animation:pop .16s ease-out;
+    }
+    @keyframes pop{ from{ transform:scale(.96); opacity:.6 } to{ transform:scale(1); opacity:1 } }
+    .agegate .badge{
+      width:84px; height:84px; margin:4px auto 14px; border-radius:22px; font-weight:900; font-size:30px;
+      display:grid; place-items:center; color:#000;
+      background:radial-gradient(circle at 30% 30%, var(--accent-2) 0 35%, var(--accent) 36% 100%);
+      box-shadow:0 0 0 6px rgba(29,185,84,.18), 0 10px 30px rgba(0,0,0,.5) inset;
+      border:2px solid #0a0;
+    }
+    .agegate h3{ margin:8px 0 8px; font-size:20px; font-weight:800; letter-spacing:.2px; }
+    .agegate p{ margin:0 0 16px; color:var(--muted); line-height:1.4; }
+    .agegate .actions{ display:flex; gap:10px; justify-content:center; margin-top:10px; flex-wrap:wrap; }
+    .btn-age{
+      padding:12px 16px; border-radius:999px; border:1px solid var(--border);
+      background:#1a1a1a; color:var(--text); cursor:pointer; font-weight:700; min-width:160px;
+    }
+    .btn-age:hover{ background:#222; }
+    .btn-age.primary{ background:var(--accent); color:#000; border:0; }
+    .btn-age.primary:hover{ filter:brightness(1.05); }
+    .btn-age.danger{ background:#2a1114; border-color:#61252b; color:#ffb5bd; }
+    .btn-age.danger:hover{ background:#361519; }
+    .agegate small{ display:block; margin-top:12px; color:var(--muted); font-size:12px; opacity:.85; }
+    .app.is-agegate{ filter:none; pointer-events:none; user-select:none; }
+
+    /* ==== LOADING UI (spinner) ==== */
+    @keyframes spin{ to{ transform:rotate(360deg) } }
+
+    .track.loading .dur{
+      position:relative; color:transparent;
+    }
+    .track.loading .dur::after{
+      content:""; width:14px; height:14px; display:inline-block; vertical-align:middle;
+      border:2px solid var(--muted); border-top-color:var(--accent); border-radius:50%;
+      animation:spin .8s linear infinite;
+    }
+
+    .now.loading::after{
+      content:""; width:18px; height:18px; margin-left:8px; display:inline-block;
+      border:2px solid var(--muted); border-top-color:var(--accent); border-radius:50%;
+      animation:spin .8s linear infinite;
+    }
+
+    .btn.primary.loading{
+      position:relative; color:transparent;
+    }
+    .btn.primary.loading::after{
+      content:""; position:absolute; inset:0; margin:auto; width:18px; height:18px;
+      border:2px solid #333; border-top-color:#000; border-radius:50%;
+      animation:spin .8s linear infinite;
+    }
+    .now.loading .np-title, .now.loading .np-artist{ opacity:.8 }
+  </style>
+</head>
+<body>
+  <div class="app" id="app">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="brand" aria-label="Player Estilo Spotify">
+        <div class="logo" aria-hidden="true"></div>
+        <div>Churras com amigos</div>
+      </div>
+      <nav class="nav" aria-label="Navegação">
+        <a href="#" class="active" aria-current="page">Início</a>
+      </nav>
+      <div class="library">
+        <h4>Pesquisar na fila</h4>
+        <label class="search">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M21 21l-4.35-4.35M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          <input id="search" type="search" placeholder="Filtrar músicas…" aria-label="Filtrar músicas" />
+        </label>
+      </div>
+    </aside>
+
+    <!-- CONTENT -->
+    <main class="content">
+      <div class="content-inner">
+        <h2 class="section-title">Churras com amigos</h2>
+
+        <!-- HERO da faixa atual -->
+        <section class="now-hero" aria-live="polite" aria-atomic="true">
+          <img id="heroCover" alt="Capa atual" />
+          <div class="hero-meta">
+            <h3 id="heroTitle">—</h3>
+            <p id="heroArtist">—</p>
+          </div>
+        </section>
+
+        <div class="grid" style="display: none;" id="albumGrid"><!-- via JS --></div>
+
+        <section class="queue" aria-label="Fila de reprodução">
+          <header>
+            <strong>Fila</strong>
+            <small id="queueCount" style="color:var(--muted)"></small>
+          </header>
+          <div class="queue-list" id="queue"><!-- via JS --></div>
+        </section>
+      </div>
+    </main>
+
+    <!-- PLAYER BAR -->
+    <footer class="playerbar" style="position:sticky; bottom:0;" role="region" aria-label="Controles do player">
+      <div class="now">
+        <img id="npCover" alt="Capa do álbum" />
+        <div class="info">
+          <div id="npTitle" class="np-title">—</div>
+          <div id="npArtist" class="np-artist">—</div>
+        </div>
+      </div>
+      <div class="controls">
+        <div class="buttons">
+          <button class="btn toggler" id="btnShuffle" aria-label="Aleatório">🔀</button>
+          <button class="btn" id="btnPrev" aria-label="Anterior">⏮</button>
+          <button class="btn primary" id="btnPlay" aria-label="Reproduzir/Pausar">▶</button>
+          <button class="btn" id="btnNext" aria-label="Próxima">⏭</button>
+          <button class="btn toggler" id="btnRepeat" aria-label="Repetir">🔁</button>
+        </div>
+        <div class="seek">
+          <span class="time" id="curTime">0:00</span>
+          <input type="range" id="seek" min="0" max="100" step="0.1" value="0" aria-label="Barra de progresso" />
+          <span class="time" id="dur">0:00</span>
+        </div>
+      </div>
+      <div class="right">
+        <div class="vol" title="Volume">
+          <span aria-hidden="true">🔊</span>
+          <input type="range" id="volume" min="0" max="1" step="0.01" value="1" aria-label="Volume" />
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- AGE GATE 18+ -->
+  <div class="agegate-backdrop" id="agegateBackdrop" role="dialog" aria-modal="true" aria-labelledby="agegateTitle" aria-describedby="agegateDesc">
+    <div class="agegate">
+      <div class="badge" aria-hidden="true">18+</div>
+      <h3 id="agegateTitle">Conteúdo para maiores de 18 anos</h3>
+      <p id="agegateDesc">Para continuar, confirme que você tem 18 anos ou mais.</p>
+      <div class="actions">
+        <button class="btn-age primary" id="ageYes">Sou maior de 18</button>
+        <button class="btn-age danger" id="ageNo">Sair do site</button>
+      </div>
+      <small>Guardaremos sua confirmação por 30 dias neste navegador.</small>
+    </div>
+  </div>
+
+  <audio id="audio"></audio>
+
+  <script>
+  let TRACKS = [];
+
+  const DEFAULT_COVER =
+    'data:image/svg+xml;utf8,' + encodeURIComponent(`
+      <svg xmlns="http://www.w3.org/2000/svg" width="512" height="512">
+        <defs><linearGradient id="g" x1="0" x2="1" y1="0" y2="1">
+          <stop offset="0%" stop-color="#1db954"/><stop offset="100%" stop-color="#0d4d2c"/></linearGradient></defs>
+        <rect width="100%" height="100%" fill="url(#g)"/>
+        <g fill="#ffffff" opacity=".85">
+          <circle cx="256" cy="256" r="146" fill="none" stroke="#fff" stroke-width="22"/>
+          <rect x="240" y="130" width="32" height="160" rx="8"/><circle cx="256" cy="326" r="22"/>
+        </g>
+      </svg>
+    `);
+
+  async function loadTracks(){
+    try{
+      const res = await fetch('tracks.json', { cache: 'no-store' });
+      if(!res.ok) throw new Error('HTTP '+res.status);
+      const data = await res.json();
+      if(!Array.isArray(data)) throw new Error('Formato inválido: Esperado um array');
+      TRACKS = data.map((t,i)=>({
+        id: t.id ?? 't'+(i+1),
+        title: t.title ?? 'Sem título',
+        artist: t.artist ?? '',
+        src: t.src, cover: t.cover, album: t.album ?? 'Singles'
+      })).filter(t=>!!t.src);
+    }catch(err){
+      console.error('Erro ao carregar tracks.json', err);
+      TRACKS = [{ id:'fallback', title:'Exemplo (adicione seu tracks.json)', artist:'', src:'assets/audio/exemplo1.mp3', cover:'', album:'Singles' }];
+    }
+  }
+
+  const audio = document.getElementById('audio');
+  audio.preload = 'none'; // 🔇 não baixa nada até tocar
+
+  const queueEl = document.getElementById('queue');
+  const queueCountEl = document.getElementById('queueCount');
+  const albumGrid = document.getElementById('albumGrid');
+  const searchInput = document.getElementById('search');
+
+  const npTitle = document.getElementById('npTitle');
+  const npArtist = document.getElementById('npArtist');
+  const npCover = document.getElementById('npCover');
+
+  const heroCover = document.getElementById('heroCover');
+  const heroTitle = document.getElementById('heroTitle');
+  const heroArtist = document.getElementById('heroArtist');
+
+  const btnPlay = document.getElementById('btnPlay');
+  const btnPrev = document.getElementById('btnPrev');
+  const btnNext = document.getElementById('btnNext');
+  const btnShuffle = document.getElementById('btnShuffle');
+  const btnRepeat = document.getElementById('btnRepeat');
+
+  const seek = document.getElementById('seek');
+  const curTime = document.getElementById('curTime');
+  const dur = document.getElementById('dur');
+  const volume = document.getElementById('volume');
+
+  let state = { index: 0, shuffled: false, repeat: false, order: [...TRACKS.keys()] };
+
+  try{
+    const saved = JSON.parse(localStorage.getItem('playerState') || '{}');
+    if (typeof saved.index === 'number') state.index = saved.index;
+    if (Array.isArray(saved.order)) state.order = saved.order;
+    if (typeof saved.shuffled === 'boolean') state.shuffled = saved.shuffled;
+    if (typeof saved.repeat === 'boolean') state.repeat = saved.repeat;
+    const vol = localStorage.getItem('playerVolume');
+    if (vol != null) { audio.volume = parseFloat(vol); volume.value = audio.volume; }
+  }catch(e){}
+
+  function saveState(){
+    localStorage.setItem('playerState', JSON.stringify({
+      index: state.index, order: state.order, shuffled: state.shuffled, repeat: state.repeat
+    }));
+  }
+
+  function fmtTime(sec){ if (!isFinite(sec)) return '0:00'; const m=Math.floor(sec/60); const s=Math.floor(sec%60).toString().padStart(2,'0'); return `${m}:${s}`; }
+  function currentTrack(){ const i = state.order[state.index] ?? 0; return TRACKS[i]; }
+
+  /* LOADING helpers */
+  function setRowLoading(pos, on){
+    const row = [...queueEl.children][pos];
+    if(row) row.classList.toggle('loading', !!on);
+  }
+  function setGlobalLoading(on){
+    document.querySelector('.now')?.classList.toggle('loading', !!on);
+    btnPlay.classList.toggle('loading', !!on);
+  }
+
+  /* Atualiza Now Playing e HERO (sem iniciar download) */
+  function setNowPlayingUI(track){
+    const cover = track.cover || DEFAULT_COVER;
+    npTitle.textContent = track.title;
+    npArtist.textContent = track.artist || '—';
+    npCover.src = cover;
+
+    if (heroCover) heroCover.src = cover;
+    if (heroTitle) heroTitle.textContent = track.title;
+    if (heroArtist) heroArtist.textContent = track.artist || '—';
+
+    document.title = `${track.title} – ${track.artist || ''}`.trim();
+  }
+
+  function renderQueue(filter=''){
+    queueEl.innerHTML = '';
+    const norm = (s)=> s?.toLowerCase() || '';
+    const f = norm(filter);
+
+    state.order.forEach((trackIdx, pos) => {
+      const t = TRACKS[trackIdx];
+      if (f && !norm(t.title).includes(f) && !norm(t.artist).includes(f)) return;
+
+      const row = document.createElement('div');
+      row.className = 'track' + (pos === state.index ? ' active' : '');
+      row.dataset.pos = String(pos);
+      row.innerHTML = `
+        <img class="track-cover" src="${t.cover || DEFAULT_COVER}" alt="Capa"/>
+        <div class="meta">
+          <div class="t">${t.title}</div>
+          <div class="a">${t.artist || ''}</div>
+        </div>
+        <div class="dur">—</div>
+      `;
+      row.addEventListener('click',()=>{ playAt(pos); });
+      queueEl.appendChild(row);
+    });
+
+    const total = state.order.length;
+    queueCountEl.textContent = `${total} faixa${total!==1?'s':''}`;
+  }
+
+  function renderAlbums(){
+    const albums = {};
+    TRACKS.forEach((t, idx)=>{ const key=t.album || 'Singles'; (albums[key] ||= []).push({ ...t, idx }); });
+
+    albumGrid.innerHTML = '';
+    Object.entries(albums).forEach(([name, tracks])=>{
+      const first = tracks[0];
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML = `
+        <img class="cover" src="${first.cover || DEFAULT_COVER}" alt="Capa do álbum ${name}"/>
+        <div class="title">${name}</div>
+        <div class="subtitle">${tracks.length} faixa${tracks.length!==1?'s':''}</div>
+      `;
+      card.addEventListener('click', ()=>{
+        const albumIdxs = tracks.map(t=>t.idx);
+        const others = TRACKS.map((_,i)=>i).filter(i=>!albumIdxs.includes(i));
+        state.order = [...albumIdxs, ...others];
+        state.index = 0;
+        saveState();
+        renderQueue(searchInput.value);
+        loadCurrent();
+        ensureSrcAndPlay(); // toca imediatamente o álbum
+      });
+      albumGrid.appendChild(card);
+    });
+  }
+
+  /* NÃO setamos audio.src aqui (lazy). Só UI/seleção. */
+  function loadCurrent(){
+    const t = currentTrack();
+    if (!t) return;
+    setNowPlayingUI(t);
+    document.querySelectorAll('.track').forEach(el=>el.classList.remove('active','loading'));
+    const active = [...queueEl.children][state.index];
+    if (active) active.classList.add('active');
+  }
+
+  async function ensureSrcAndPlay(){
+    const t = currentTrack();
+    if(!t) return;
+
+    setRowLoading(state.index, true);
+    setGlobalLoading(true);
+
+    if(audio.dataset.trackId !== t.id){
+      audio.src = t.src;
+      audio.dataset.trackId = t.id;
+    }
+
+    try{
+      await audio.play();
+      btnPlay.textContent='⏸';
+      btnPlay.setAttribute('aria-label','Pausar');
+    }catch(e){
+      setRowLoading(state.index, false);
+      setGlobalLoading(false);
+    }
+  }
+
+  function pause(){
+    audio.pause();
+    btnPlay.textContent='▶';
+    btnPlay.setAttribute('aria-label','Reproduzir');
+  }
+
+  function playAt(pos){
+    state.index = Math.max(0, Math.min(state.order.length-1, pos));
+    saveState();
+    loadCurrent();
+    ensureSrcAndPlay();
+  }
+
+  function next(){
+    if (state.repeat){
+      audio.currentTime=0;
+      ensureSrcAndPlay();
+      return;
+    }
+    state.index = (state.index+1)%state.order.length;
+    saveState();
+    loadCurrent();
+    ensureSrcAndPlay();
+  }
+
+  function prev(){
+    if (audio.currentTime>3){
+      audio.currentTime=0;
+      return;
+    }
+    state.index = (state.index-1+state.order.length)%state.order.length;
+    saveState();
+    loadCurrent();
+    ensureSrcAndPlay();
+  }
+
+  function toggleShuffle(){
+    state.shuffled=!state.shuffled; btnShuffle.classList.toggle('on', state.shuffled);
+    const currentIdx = state.order[state.index];
+    if (state.shuffled){
+      const rest = state.order.filter((_,i)=>i!==state.index);
+      for(let i=rest.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [rest[i],rest[j]]=[rest[j],rest[i]]; }
+      state.order = [currentIdx, ...rest]; state.index=0;
+    }else{
+      const natural = [...TRACKS.keys()];
+      const pos = natural.indexOf(currentIdx);
+      state.order = [...natural.slice(pos), ...natural.slice(0,pos)]; state.index=0;
+    }
+    saveState(); renderQueue(searchInput.value);
+  }
+
+  function toggleRepeat(){ state.repeat=!state.repeat; btnRepeat.classList.toggle('on', state.repeat); saveState(); }
+
+  /* AUDIO events */
+  audio.addEventListener('loadedmetadata', ()=>{ dur.textContent = fmtTime(audio.duration); });
+  audio.addEventListener('timeupdate', ()=>{ curTime.textContent = fmtTime(audio.currentTime); if (!isNaN(audio.duration)) seek.value = (audio.currentTime / audio.duration) * 100 || 0; });
+  audio.addEventListener('ended', next);
+
+  // Loading indicators
+  audio.addEventListener('waiting', ()=>{ setRowLoading(state.index, true); setGlobalLoading(true); });
+  audio.addEventListener('playing', ()=>{ setRowLoading(state.index, false); setGlobalLoading(false); });
+  audio.addEventListener('canplay', ()=>{ setRowLoading(state.index, false); setGlobalLoading(false); dur.textContent = fmtTime(audio.duration); });
+  audio.addEventListener('stalled', ()=>{ setRowLoading(state.index, true); setGlobalLoading(true); });
+
+  seek.addEventListener('input', ()=>{ const p=parseFloat(seek.value)/100; if (isFinite(audio.duration)) curTime.textContent = fmtTime(p*audio.duration); });
+  seek.addEventListener('change', ()=>{ const p=parseFloat(seek.value)/100; if (isFinite(audio.duration)) audio.currentTime = p*audio.duration; });
+
+  volume.addEventListener('input', ()=>{ audio.volume = parseFloat(volume.value); localStorage.setItem('playerVolume', String(audio.volume)); });
+
+  btnPlay.addEventListener('click', ()=>{ if (audio.paused) ensureSrcAndPlay(); else pause(); });
+  btnPrev.addEventListener('click', prev);
+  btnNext.addEventListener('click', next);
+  btnShuffle.addEventListener('click', toggleShuffle);
+  btnRepeat.addEventListener('click', toggleRepeat);
+
+  searchInput.addEventListener('input', ()=>{ renderQueue(searchInput.value); });
+
+  window.addEventListener('keydown', (e)=>{
+    if (e.target.tagName === 'INPUT') return;
+    if (e.code === 'Space'){ e.preventDefault(); if (audio.paused) ensureSrcAndPlay(); else pause(); }
+    if (e.code === 'ArrowRight'){ audio.currentTime = Math.min(audio.currentTime + 5, audio.duration || audio.currentTime); }
+    if (e.code === 'ArrowLeft'){ audio.currentTime = Math.max(audio.currentTime - 5, 0); }
+    if (e.code === 'ArrowUp'){ audio.volume = Math.min(1, audio.volume + 0.05); volume.value = audio.volume; localStorage.setItem('playerVolume', String(audio.volume)); }
+    if (e.code === 'ArrowDown'){ audio.volume = Math.max(0, audio.volume - 0.05); volume.value = audio.volume; localStorage.setItem('playerVolume', String(audio.volume)); }
+  });
+
+  (function init(){
+    albumGrid.innerHTML = '<div style="opacity:.7">Carregando álbuns…</div>';
+    queueEl.innerHTML = '<div style="padding:12px; opacity:.7">Carregando fila…</div>';
+
+    loadTracks().then(()=>{
+      if (!Array.isArray(state.order) || !state.order.length){ state.order = [...TRACKS.keys()]; }
+      else{
+        state.order = state.order.filter(i=>i>=0 && i<TRACKS.length);
+        if(!state.order.length) state.order = [...TRACKS.keys()];
+        state.index = Math.min(Math.max(0, state.index), state.order.length-1);
+      }
+      renderAlbums(); renderQueue(); loadCurrent();
+    });
+
+    /* ===== AGE GATE (18+) ===== */
+    (function(){
+      const AGE_KEY = 'age_ok_until'; // timestamp (ms)
+      const DAYS = 30;
+
+      const app = document.getElementById('app');
+      const backdrop = document.getElementById('agegateBackdrop');
+      const btnYes = document.getElementById('ageYes');
+      const btnNo  = document.getElementById('ageNo');
+
+      if(!backdrop || !btnYes || !btnNo || !app) return;
+
+      const firstFocusable = btnYes;
+      const lastFocusable  = btnNo;
+
+      function now(){ return Date.now(); }
+      function isAllowed(){
+        const until = parseInt(localStorage.getItem(AGE_KEY) || '0', 10);
+        return Number.isFinite(until) && now() < until;
+      }
+      function allow(){
+        const until = now() + DAYS*24*60*60*1000;
+        localStorage.setItem(AGE_KEY, String(until));
+      }
+
+      function openGate(){
+        backdrop.classList.add('show');
+        app.classList.add('is-agegate');
+        setTimeout(()=>firstFocusable.focus(), 0);
+        document.addEventListener('keydown', trapTab);
+        document.addEventListener('keydown', onEscape);
+      }
+      function closeGate(){
+        backdrop.classList.remove('show');
+        app.classList.remove('is-agegate');
+        document.removeEventListener('keydown', trapTab);
+        document.removeEventListener('keydown', onEscape);
+      }
+      function trapTab(e){
+        if(e.key !== 'Tab') return;
+        const active = document.activeElement;
+        if(e.shiftKey && active === firstFocusable){ e.preventDefault(); lastFocusable.focus(); }
+        else if(!e.shiftKey && active === lastFocusable){ e.preventDefault(); firstFocusable.focus(); }
+      }
+      function onEscape(e){
+        if(e.key === 'Escape'){ exitSite(); }
+      }
+      function exitSite(){
+        try{ window.location.replace('https://www.google.com'); }
+        catch(_){ window.location.href = 'about:blank'; }
+      }
+
+      btnYes.addEventListener('click', ()=>{ allow(); closeGate(); });
+      btnNo .addEventListener('click', exitSite);
+
+      if(!isAllowed()) openGate();
+    })();
+  })();
+  </script>
+</body>
+</html>
